@@ -138,13 +138,31 @@ const API = {
       };
     }
 
-    // Generate random result
-    const random = Math.random() * 100;
-    const isWin = random < CONFIG.WIN_PERCENTAGE;
-
+    // Check for demo codes with guaranteed outcomes
+    let isWin;
     let prize = null;
-    if (isWin) {
-      prize = this._determinePrize();
+
+    if (qrCode.includes('-WIN0-') || qrCode.includes('-WIN1-') || qrCode.includes('-WIN2-')) {
+      // Guaranteed win codes for demos
+      isWin = true;
+      // WIN0 = GH₵5, WIN1 = GH₵10, WIN2 = GH₵50
+      if (qrCode.includes('-WIN2-')) {
+        prize = 'GH₵50 Airtime';
+      } else if (qrCode.includes('-WIN1-')) {
+        prize = 'GH₵10 Airtime';
+      } else {
+        prize = 'GH₵5 Airtime';
+      }
+    } else if (qrCode.includes('-LOSE-')) {
+      // Guaranteed lose codes for demos
+      isWin = false;
+    } else {
+      // Normal random result
+      const random = Math.random() * 100;
+      isWin = random < CONFIG.WIN_PERCENTAGE;
+      if (isWin) {
+        prize = this._determinePrize();
+      }
     }
 
     // Generate transaction hash
