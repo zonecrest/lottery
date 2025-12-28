@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="#FCD116"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#006B3F" stroke-width="5"/>
+
+  <!-- Inner decorative ring -->
+  <circle cx="100" cy="100" r="75" fill="none" stroke="#CE1126" stroke-width="2"/>
+
+  <!-- Black Star of Ghana -->
+  <path d="M100 30 L116 76 L166 76 L126 104 L142 150 L100 122 L58 150 L74 104 L34 76 L84 76 Z" fill="#000000"/>
+
+  <!-- GRA Text (top) -->
+  <text x="100" y="175" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="18" font-weight="bold" fill="#006B3F">E-VAT LOTTERY</text>
+</svg>

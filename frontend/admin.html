@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="E-VAT Lottery Admin Dashboard - Generate QR codes and manage demo data.">
+  <meta name="theme-color" content="#006B3F">
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>Admin - E-VAT Lottery</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="admin">
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="offline-banner">
+    You're offline. Some features may not work.
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <div class="logo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 10 L61 40 L95 40 L68 58 L79 90 L50 72 L21 90 L32 58 L5 40 L39 40 Z" fill="#000000"/>
+        </svg>
+      </div>
+      <h1>Admin Dashboard</h1>
+      <p>Demo Management</p>
+    </header>
+
+    <!-- Demo Mode Notice -->
+    <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+      <h3 style="color: #856404; margin-bottom: 0.5rem;">
+        ⚠️ Demo Mode Active
+      </h3>
+      <p class="text-sm" style="color: #856404;">
+        This prototype is running in demo mode with simulated data. All transactions are stored locally in your browser. In production, this would connect to the n8n backend and Google Sheets.
+      </p>
+    </div>
+
+    <!-- Generate QR Codes Section -->
+    <section class="admin-section">
+      <h3>
+        <span>📱</span> Generate Test QR Codes
+      </h3>
+
+      <div class="card">
+        <p class="text-sm text-gray mb-2">
+          Generate dummy VAT receipt QR codes for testing. These codes follow the GRA format: GRA-VAT-YYYY-XXXX-XXXX-XXXX
+        </p>
+
+        <div class="form-group">
+          <label class="form-label" for="qr-count">Number of QR Codes</label>
+          <select id="qr-count" class="form-input">
+            <option value="3">3 codes</option>
+            <option value="5" selected>5 codes</option>
+            <option value="10">10 codes</option>
+            <option value="20">20 codes</option>
+          </select>
+        </div>
+
+        <button id="generate-qr-btn" class="btn btn-primary btn-block">
+          Generate QR Codes
+        </button>
+      </div>
+
+      <div id="qr-grid" class="qr-grid">
+        <p class="text-center text-gray" style="grid-column: 1 / -1;">
+          Click "Generate QR Codes" to create test codes
+        </p>
+      </div>
+
+      <div class="card mt-2">
+        <h4 style="color: #006B3F; margin-bottom: 0.5rem;">📝 Print Instructions</h4>
+        <ol class="text-sm" style="margin-left: 1.5rem; color: #666;">
+          <li>Generate QR codes above</li>
+          <li>Right-click on a QR code image and "Save Image As"</li>
+          <li>Print the saved images</li>
+          <li>Scan the printed codes with the lottery app</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Transactions Section -->
+    <section class="admin-section">
+      <h3>
+        <span>📊</span> Recent Transactions
+      </h3>
+
+      <div class="card">
+        <div id="transactions-table">
+          <p class="text-center text-gray">No transactions yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Config Section -->
+    <section class="admin-section">
+      <h3>
+        <span>⚙️</span> Configuration
+      </h3>
+
+      <div class="card">
+        <h4 style="margin-bottom: 1rem;">Current Settings</h4>
+
+        <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.75rem;">
+          <div style="margin-bottom: 0.5rem;">
+            <strong>Win Percentage:</strong> 10%
+          </div>
+          <div style="margin-bottom: 0.5rem;">
+            <strong>Prize Tiers:</strong><br>
+            - GH₵5 Airtime: 70% of wins<br>
+            - GH₵10 Airtime: 25% of wins<br>
+            - GH₵50 Airtime: 5% of wins
+          </div>
+          <div style="margin-bottom: 0.5rem;">
+            <strong>Rate Limit:</strong> 10 scans/hour/phone
+          </div>
+          <div>
+            <strong>Mode:</strong> Demo (Local Storage)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- n8n Setup Section -->
+    <section class="admin-section">
+      <h3>
+        <span>🔗</span> n8n Integration
+      </h3>
+
+      <div class="card">
+        <p class="text-sm text-gray mb-2">
+          To connect to a real n8n backend:
+        </p>
+
+        <ol class="text-sm" style="margin-left: 1.5rem; color: #666; margin-bottom: 1rem;">
+          <li>Import the workflow from <code>/n8n/lottery-workflow.json</code></li>
+          <li>Configure your Google Sheets credentials</li>
+          <li>Copy your webhook URL</li>
+          <li>Update <code>N8N_WEBHOOK_URL</code> in <code>js/config.js</code></li>
+          <li>Set <code>DEMO_MODE</code> to <code>false</code></li>
+        </ol>
+
+        <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px;">
+          <label class="form-label">Webhook URL (read-only for demo)</label>
+          <input
+            type="text"
+            class="form-input"
+            value="https://YOUR-N8N-INSTANCE.app.n8n.cloud/webhook"
+            readonly
+            style="background: #fff; font-family: monospace; font-size: 0.75rem;"
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Reset Section -->
+    <section class="admin-section">
+      <h3>
+        <span>🗑️</span> Reset Demo Data
+      </h3>
+
+      <div class="card">
+        <p class="text-sm text-gray mb-2">
+          Clear all locally stored demo data including scans, wins, leaderboard, and audit log.
+        </p>
+
+        <button id="reset-btn" class="btn btn-danger btn-block">
+          Reset All Demo Data
+        </button>
+      </div>
+    </section>
+
+    <!-- Back to App -->
+    <div class="text-center mt-2 mb-2">
+      <a href="index.html" class="btn btn-outline">
+        ← Back to Lottery App
+      </a>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

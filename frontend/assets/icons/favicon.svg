@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background Circle - Ghana Gold -->
+  <circle cx="50" cy="50" r="48" fill="#FCD116"/>
+
+  <!-- Ghana Green Border -->
+  <circle cx="50" cy="50" r="48" fill="none" stroke="#006B3F" stroke-width="4"/>
+
+  <!-- Black Star of Ghana -->
+  <path d="M50 15 L58 38 L83 38 L63 52 L71 77 L50 62 L29 77 L37 52 L17 38 L42 38 Z" fill="#000000"/>
+</svg>

@@ -1,0 +1,107 @@
+{
+  "description": "Pre-generated QR codes for demo purposes",
+  "generated": "2024-12-28",
+  "format": "GRA-VAT-YYYY-XXXX-XXXX-XXXX",
+  "codes": [
+    {
+      "id": 1,
+      "code": "GRA-VAT-2024-A1B2-C3D4-E5F6",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-A1B2-C3D4-E5F6"
+    },
+    {
+      "id": 2,
+      "code": "GRA-VAT-2024-G7H8-I9J0-K1L2",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-G7H8-I9J0-K1L2"
+    },
+    {
+      "id": 3,
+      "code": "GRA-VAT-2024-M3N4-O5P6-Q7R8",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-M3N4-O5P6-Q7R8"
+    },
+    {
+      "id": 4,
+      "code": "GRA-VAT-2024-S9T0-U1V2-W3X4",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-S9T0-U1V2-W3X4"
+    },
+    {
+      "id": 5,
+      "code": "GRA-VAT-2024-Y5Z6-A7B8-C9D0",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-Y5Z6-A7B8-C9D0"
+    },
+    {
+      "id": 6,
+      "code": "GRA-VAT-2024-E1F2-G3H4-I5J6",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-E1F2-G3H4-I5J6"
+    },
+    {
+      "id": 7,
+      "code": "GRA-VAT-2024-K7L8-M9N0-O1P2",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-K7L8-M9N0-O1P2"
+    },
+    {
+      "id": 8,
+      "code": "GRA-VAT-2024-Q3R4-S5T6-U7V8",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-Q3R4-S5T6-U7V8"
+    },
+    {
+      "id": 9,
+      "code": "GRA-VAT-2024-W9X0-Y1Z2-A3B4",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-W9X0-Y1Z2-A3B4"
+    },
+    {
+      "id": 10,
+      "code": "GRA-VAT-2024-C5D6-E7F8-G9H0",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-C5D6-E7F8-G9H0"
+    },
+    {
+      "id": 11,
+      "code": "GRA-VAT-2024-I1J2-K3L4-M5N6",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-I1J2-K3L4-M5N6"
+    },
+    {
+      "id": 12,
+      "code": "GRA-VAT-2024-O7P8-Q9R0-S1T2",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-O7P8-Q9R0-S1T2"
+    },
+    {
+      "id": 13,
+      "code": "GRA-VAT-2024-U3V4-W5X6-Y7Z8",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-U3V4-W5X6-Y7Z8"
+    },
+    {
+      "id": 14,
+      "code": "GRA-VAT-2024-A9B0-C1D2-E3F4",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-A9B0-C1D2-E3F4"
+    },
+    {
+      "id": 15,
+      "code": "GRA-VAT-2024-G5H6-I7J8-K9L0",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-G5H6-I7J8-K9L0"
+    },
+    {
+      "id": 16,
+      "code": "GRA-VAT-2024-M1N2-O3P4-Q5R6",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-M1N2-O3P4-Q5R6"
+    },
+    {
+      "id": 17,
+      "code": "GRA-VAT-2024-S7T8-U9V0-W1X2",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-S7T8-U9V0-W1X2"
+    },
+    {
+      "id": 18,
+      "code": "GRA-VAT-2024-Y3Z4-A5B6-C7D8",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-Y3Z4-A5B6-C7D8"
+    },
+    {
+      "id": 19,
+      "code": "GRA-VAT-2024-E9F0-G1H2-I3J4",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-E9F0-G1H2-I3J4"
+    },
+    {
+      "id": 20,
+      "code": "GRA-VAT-2024-K5L6-M7N8-O9P0",
+      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-K5L6-M7N8-O9P0"
+    }
+  ]
+}

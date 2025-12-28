@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="See the top E-VAT Lottery scanners and your ranking!">
+  <meta name="theme-color" content="#006B3F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Leaderboard - E-VAT Lottery</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="leaderboard">
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="offline-banner">
+    You're offline. Some features may not work.
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <div class="logo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 10 L61 40 L95 40 L68 58 L79 90 L50 72 L21 90 L32 58 L5 40 L39 40 Z" fill="#000000"/>
+        </svg>
+      </div>
+      <h1>Leaderboard</h1>
+      <p>Top Scanners This Week</p>
+    </header>
+
+    <!-- User Rank Card -->
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #FCD116 0%, #ffeb3b 100%);">
+      <h3 id="user-rank" style="color: #006B3F; margin: 0;">Your rank: Loading...</h3>
+      <p class="text-sm" style="color: #333; margin-top: 0.5rem;">Keep scanning to climb the leaderboard!</p>
+    </div>
+
+    <!-- Period Tabs -->
+    <div class="leaderboard-tabs">
+      <button class="tab-btn active" data-period="all-time">All Time</button>
+      <button class="tab-btn" data-period="weekly">This Week</button>
+    </div>
+
+    <!-- Leaderboard List -->
+    <div class="card">
+      <ul id="leaderboard-list" class="leaderboard-list">
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      </ul>
+    </div>
+
+    <!-- Badges Explanation -->
+    <div class="card">
+      <h3 class="card-title">
+        <span class="icon">🏅</span>
+        Scanner Badges
+      </h3>
+      <div style="display: flex; justify-content: space-around; text-align: center;">
+        <div>
+          <div style="font-size: 2rem;">🥉</div>
+          <div class="text-sm"><strong>Bronze</strong></div>
+          <div class="text-xs text-gray">10+ scans</div>
+        </div>
+        <div>
+          <div style="font-size: 2rem;">🥈</div>
+          <div class="text-sm"><strong>Silver</strong></div>
+          <div class="text-xs text-gray">25+ scans</div>
+        </div>
+        <div>
+          <div style="font-size: 2rem;">🥇</div>
+          <div class="text-sm"><strong>Gold</strong></div>
+          <div class="text-xs text-gray">50+ scans</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center mt-2">
+      <a href="index.html" class="btn btn-primary">
+        📷 Scan More Receipts
+      </a>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="nav-icon">📷</span>
+      <span>Scan</span>
+    </a>
+    <a href="leaderboard.html" class="nav-item active">
+      <span class="nav-icon">🏆</span>
+      <span>Leaderboard</span>
+    </a>
+    <a href="transparency.html" class="nav-item">
+      <span class="nav-icon">🔍</span>
+      <span>Verify</span>
+    </a>
+  </nav>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

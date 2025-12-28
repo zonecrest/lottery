@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Scan your VAT receipts and win instant prizes! Ghana E-VAT Receipt Lottery.">
+  <meta name="theme-color" content="#006B3F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>E-VAT Lottery - Scan & Win!</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="scanner">
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="offline-banner">
+    You're offline. Some features may not work.
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <div class="logo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ghana Star -->
+          <path d="M50 10 L61 40 L95 40 L68 58 L79 90 L50 72 L21 90 L32 58 L5 40 L39 40 Z" fill="#000000"/>
+        </svg>
+      </div>
+      <h1>E-VAT Lottery</h1>
+      <p>Scan Your Receipt - Win Instantly!</p>
+    </header>
+
+    <!-- Registration Form -->
+    <section id="registration-form" class="card">
+      <h3 class="card-title">
+        <span class="icon">📱</span>
+        Get Started
+      </h3>
+      <p class="mb-2">Enter your phone number to start scanning receipts and winning prizes!</p>
+
+      <div class="form-group">
+        <label class="form-label" for="phone-input">Phone Number</label>
+        <input
+          type="tel"
+          id="phone-input"
+          class="form-input"
+          placeholder="0241234567"
+          maxlength="10"
+          pattern="[0-9]*"
+          inputmode="numeric"
+          autocomplete="tel"
+        >
+      </div>
+
+      <button id="register-btn" class="btn btn-gold btn-block">
+        Start Scanning
+      </button>
+
+      <p class="text-xs text-gray text-center mt-2">
+        Your phone number is only used to track your wins and leaderboard position.
+      </p>
+    </section>
+
+    <!-- Scanner Section -->
+    <section id="scanner-section" class="hidden">
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value" id="total-scans">0</div>
+          <div class="stat-label">Scans Today</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="total-wins">0</div>
+          <div class="stat-label">Total Wins</div>
+        </div>
+      </div>
+
+      <!-- QR Scanner -->
+      <div class="card">
+        <h3 class="card-title">
+          <span class="icon">📷</span>
+          Scan Receipt QR Code
+        </h3>
+
+        <div class="scanner-container">
+          <div id="qr-reader"></div>
+          <div class="scanner-overlay">
+            <div class="scanner-frame"></div>
+          </div>
+          <div class="scanner-hint">Position QR code in frame</div>
+        </div>
+
+        <p class="text-sm text-gray text-center mt-1">
+          Point your camera at the QR code on your VAT receipt
+        </p>
+      </div>
+
+      <!-- How It Works -->
+      <div class="card">
+        <h3 class="card-title">
+          <span class="icon">🎯</span>
+          How It Works
+        </h3>
+        <ol style="margin-left: 1.5rem; color: #666;">
+          <li style="margin-bottom: 0.5rem;">Get a VAT receipt with QR code from any registered business</li>
+          <li style="margin-bottom: 0.5rem;">Scan the QR code using this app</li>
+          <li style="margin-bottom: 0.5rem;">Instantly find out if you've won airtime!</li>
+          <li>Win up to GH₵50 per scan!</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <!-- Result Modal -->
+  <div id="result-modal" class="modal-overlay">
+    <div class="modal">
+      <!-- Content populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading" class="modal-overlay hidden" style="background: rgba(0,0,0,0.5);">
+    <div class="loading">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+      <span class="nav-icon">📷</span>
+      <span>Scan</span>
+    </a>
+    <a href="leaderboard.html" class="nav-item">
+      <span class="nav-icon">🏆</span>
+      <span>Leaderboard</span>
+    </a>
+    <a href="transparency.html" class="nav-item">
+      <span class="nav-icon">🔍</span>
+      <span>Verify</span>
+    </a>
+  </nav>
+
+  <!-- Win Sound (silent until triggered) -->
+  <audio id="win-sound" preload="auto">
+    <source src="assets/sounds/win.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

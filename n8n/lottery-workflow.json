@@ -1,0 +1,514 @@
+{
+  "name": "Ghana E-VAT Receipt Lottery",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "scan",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "scan-webhook",
+      "name": "Webhook: Scan Receipt",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "webhookId": "scan"
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "leaderboard",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "leaderboard-webhook",
+      "name": "Webhook: Get Leaderboard",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 500],
+      "webhookId": "leaderboard"
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "audit-log",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "audit-webhook",
+      "name": "Webhook: Get Audit Log",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 700],
+      "webhookId": "audit-log"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-qr",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "generate-qr-webhook",
+      "name": "Webhook: Generate QR Codes",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 900],
+      "webhookId": "generate-qr"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ghana E-VAT Lottery - Scan Processing Logic\n\nconst input = $input.first().json.body;\nconst qrCode = input.qr_code;\nconst phone = input.phone;\nconst timestamp = input.timestamp || new Date().toISOString();\n\n// Configuration\nconst WIN_PERCENTAGE = 10;\nconst PRIZES = {\n  'GH₵5 Airtime': 70,\n  'GH₵10 Airtime': 25,\n  'GH₵50 Airtime': 5\n};\nconst QR_PATTERN = /^GRA-VAT-\\d{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;\n\n// Validate QR code format\nif (!QR_PATTERN.test(qrCode)) {\n  return {\n    json: {\n      success: false,\n      error: 'Invalid QR code format',\n      message: \"This doesn't look like a valid GRA VAT receipt QR code.\"\n    }\n  };\n}\n\n// Generate random number for lottery\nconst random = Math.random() * 100;\nconst isWin = random < WIN_PERCENTAGE;\n\n// Determine prize if win\nlet prize = null;\nif (isWin) {\n  const prizeRandom = Math.random() * 100;\n  let cumulative = 0;\n  for (const [prizeName, percentage] of Object.entries(PRIZES)) {\n    cumulative += percentage;\n    if (prizeRandom < cumulative) {\n      prize = prizeName;\n      break;\n    }\n  }\n}\n\n// Generate transaction hash\nconst randomSeed = Math.random().toString(36).substring(2, 15);\nconst hashInput = qrCode + phone + timestamp + randomSeed;\nlet hash = 0;\nfor (let i = 0; i < hashInput.length; i++) {\n  const char = hashInput.charCodeAt(i);\n  hash = ((hash << 5) - hash) + char;\n  hash = hash & hash;\n}\nconst transactionHash = Math.abs(hash).toString(16).padStart(64, '0').substring(0, 64);\n\n// Prepare result\nconst result = {\n  qr_code: qrCode,\n  phone: phone,\n  timestamp: timestamp,\n  result: isWin ? 'WIN' : 'LOSE',\n  prize: prize,\n  transaction_hash: transactionHash,\n  random_seed: randomSeed,\n  success: true,\n  message: isWin\n    ? `Congratulations! You won ${prize}!`\n    : 'No win this time - keep scanning for more chances!'\n};\n\nreturn { json: result };"
+      },
+      "id": "process-scan",
+      "name": "Process Scan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-success",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-valid",
+      "name": "Check Valid Scan",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "{{ $env.GOOGLE_SHEET_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "scans",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "phone": "={{ $json.phone }}",
+            "qr_code": "={{ $json.qr_code }}",
+            "result": "={{ $json.result }}",
+            "prize": "={{ $json.prize }}",
+            "transaction_hash": "={{ $json.transaction_hash }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "save-to-scans",
+      "name": "Save to Scans Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [880, 280],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-cred",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-win",
+              "leftValue": "={{ $json.result }}",
+              "rightValue": "WIN",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-win",
+      "name": "Check if Win",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1100, 280]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "{{ $env.GOOGLE_SHEET_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "audit_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "phone_masked": "={{ $json.phone.substring(0, 3) + '****' + $json.phone.substring($json.phone.length - 3) }}",
+            "prize": "={{ $json.prize }}",
+            "transaction_hash": "={{ $json.transaction_hash }}",
+            "random_seed": "={{ $json.random_seed }}",
+            "verified": "true"
+          }
+        },
+        "options": {}
+      },
+      "id": "save-to-audit",
+      "name": "Save to Audit Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [1320, 220],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-cred",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-scan",
+      "name": "Respond with Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1540, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get leaderboard data from Google Sheets\nconst phone = $input.first().json.query?.phone || '';\nconst period = $input.first().json.query?.period || 'all-time';\n\n// In production, this would query Google Sheets\n// For now, return sample data structure\nconst leaderboard = [\n  { rank: 1, phone_masked: '024****567', scans: 45, wins: 5 },\n  { rank: 2, phone_masked: '055****123', scans: 38, wins: 3 },\n  { rank: 3, phone_masked: '027****789', scans: 32, wins: 4 },\n  { rank: 4, phone_masked: '020****456', scans: 28, wins: 2 },\n  { rank: 5, phone_masked: '054****321', scans: 22, wins: 3 }\n];\n\nreturn {\n  json: {\n    leaderboard: leaderboard,\n    user_rank: 7,\n    user_scans: 15,\n    user_wins: 2\n  }\n};"
+      },
+      "id": "get-leaderboard",
+      "name": "Get Leaderboard Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-leaderboard",
+      "name": "Respond with Leaderboard",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get audit log data from Google Sheets\n// In production, this would query the audit_log sheet\n\nconst entries = [];\nconst totalPayouts = 'GH₵0';\nconst totalWinners = 0;\n\nreturn {\n  json: {\n    entries: entries,\n    total_payouts: totalPayouts,\n    total_winners: totalWinners\n  }\n};"
+      },
+      "id": "get-audit-log",
+      "name": "Get Audit Log Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 700]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-audit",
+      "name": "Respond with Audit Log",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 700]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate QR codes for demo\nconst count = $input.first().json.body?.count || 5;\nconst year = new Date().getFullYear();\n\nfunction randomCode() {\n  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';\n  let result = '';\n  for (let i = 0; i < 4; i++) {\n    result += chars.charAt(Math.floor(Math.random() * chars.length));\n  }\n  return result;\n}\n\nconst qrCodes = [];\nfor (let i = 0; i < count; i++) {\n  const code = `GRA-VAT-${year}-${randomCode()}-${randomCode()}-${randomCode()}`;\n  qrCodes.push({\n    code: code,\n    qr_data: code\n  });\n}\n\nreturn { json: { qr_codes: qrCodes } };"
+      },
+      "id": "generate-qr-codes",
+      "name": "Generate QR Codes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 900]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-qr",
+      "name": "Respond with QR Codes",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 900]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-invalid",
+      "name": "Respond Invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 380]
+    }
+  ],
+  "connections": {
+    "Webhook: Scan Receipt": {
+      "main": [
+        [
+          {
+            "node": "Process Scan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Scan": {
+      "main": [
+        [
+          {
+            "node": "Check Valid Scan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Valid Scan": {
+      "main": [
+        [
+          {
+            "node": "Save to Scans Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Scans Sheet": {
+      "main": [
+        [
+          {
+            "node": "Check if Win",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Win": {
+      "main": [
+        [
+          {
+            "node": "Save to Audit Log",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond with Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Audit Log": {
+      "main": [
+        [
+          {
+            "node": "Respond with Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: Get Leaderboard": {
+      "main": [
+        [
+          {
+            "node": "Get Leaderboard Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Leaderboard Data": {
+      "main": [
+        [
+          {
+            "node": "Respond with Leaderboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: Get Audit Log": {
+      "main": [
+        [
+          {
+            "node": "Get Audit Log Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audit Log Data": {
+      "main": [
+        [
+          {
+            "node": "Respond with Audit Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: Generate QR Codes": {
+      "main": [
+        [
+          {
+            "node": "Generate QR Codes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate QR Codes": {
+      "main": [
+        [
+          {
+            "node": "Respond with QR Codes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "Ghana",
+      "createdAt": "2024-12-28T00:00:00.000Z",
+      "updatedAt": "2024-12-28T00:00:00.000Z"
+    },
+    {
+      "name": "Lottery",
+      "createdAt": "2024-12-28T00:00:00.000Z",
+      "updatedAt": "2024-12-28T00:00:00.000Z"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-28T00:00:00.000Z",
+  "versionId": "1"
+}

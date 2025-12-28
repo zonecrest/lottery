@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Verify E-VAT Lottery winning transactions with cryptographic proofs.">
+  <meta name="theme-color" content="#006B3F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Transparency - E-VAT Lottery</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="transparency">
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="offline-banner">
+    You're offline. Some features may not work.
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <div class="logo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 10 L61 40 L95 40 L68 58 L79 90 L50 72 L21 90 L32 58 L5 40 L39 40 Z" fill="#000000"/>
+        </svg>
+      </div>
+      <h1>Transparency</h1>
+      <p>Verifiable & Trustworthy</p>
+    </header>
+
+    <!-- Summary Stats -->
+    <div id="audit-summary" class="audit-summary">
+      <div class="summary-card">
+        <div class="summary-value">-</div>
+        <div class="summary-label">Total Winners</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value">-</div>
+        <div class="summary-label">Total Payouts</div>
+      </div>
+    </div>
+
+    <!-- How Verification Works -->
+    <div class="card">
+      <h3 class="card-title">
+        <span class="icon">🔐</span>
+        How Verification Works
+      </h3>
+      <p class="text-sm" style="margin-bottom: 1rem; color: #666;">
+        Every lottery result is determined by a cryptographic hash function. No human picks the winners - the code does, and you can verify it!
+      </p>
+
+      <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; font-size: 0.875rem;">
+        <div style="margin-bottom: 0.5rem;">
+          <strong>1. Inputs:</strong><br>
+          <code style="font-size: 0.75rem;">QR Code + Phone + Timestamp + Random Seed</code>
+        </div>
+        <div style="margin-bottom: 0.5rem;">
+          <strong>2. Hash Function:</strong><br>
+          <code style="font-size: 0.75rem;">SHA-256(inputs) = Transaction Hash</code>
+        </div>
+        <div>
+          <strong>3. Result:</strong><br>
+          <span class="text-sm">If hash ends in specific pattern = WIN</span>
+        </div>
+      </div>
+
+      <p class="text-xs text-gray mt-2">
+        This process is deterministic - the same inputs always produce the same result, ensuring fairness.
+      </p>
+    </div>
+
+    <!-- Audit Log -->
+    <div class="card">
+      <h3 class="card-title">
+        <span class="icon">📋</span>
+        Recent Winning Transactions
+      </h3>
+
+      <ul id="audit-list" class="audit-list">
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      </ul>
+    </div>
+
+    <!-- Trust Statement -->
+    <div class="card" style="background: linear-gradient(135deg, #006B3F 0%, #004d2e 100%); color: white;">
+      <h3 style="color: #FCD116; margin-bottom: 0.5rem;">
+        🛡️ Built on Trust
+      </h3>
+      <p class="text-sm" style="opacity: 0.9;">
+        The E-VAT Lottery is designed to be transparent and verifiable. Every transaction is recorded and can be independently verified. No manual intervention, no rigging - just fair, random chance.
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center mt-2">
+      <a href="index.html" class="btn btn-gold">
+        📷 Scan a Receipt
+      </a>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="nav-icon">📷</span>
+      <span>Scan</span>
+    </a>
+    <a href="leaderboard.html" class="nav-item">
+      <span class="nav-icon">🏆</span>
+      <span>Leaderboard</span>
+    </a>
+    <a href="transparency.html" class="nav-item active">
+      <span class="nav-icon">🔍</span>
+      <span>Verify</span>
+    </a>
+  </nav>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
