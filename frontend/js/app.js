@@ -8,6 +8,8 @@ const App = {
   isRegistered: false,
   totalScans: 0,
   totalWins: 0,
+  lastScannedCode: null,
+  lastScanTime: 0,
 
   /**
    * Initialize the application
@@ -63,6 +65,15 @@ const App = {
       this.showToast('Please register first', 'error');
       return;
     }
+
+    // Debounce: ignore same code within 5 seconds
+    const now = Date.now();
+    if (qrCode === this.lastScannedCode && (now - this.lastScanTime) < 5000) {
+      console.log('[App] Ignoring duplicate scan');
+      return;
+    }
+    this.lastScannedCode = qrCode;
+    this.lastScanTime = now;
 
     // Show loading
     this._showLoading(true);
