@@ -1,36 +1,106 @@
 {
   "description": "Pre-generated QR codes for demo purposes",
-  "generated": "2024-12-28",
-  "format": "GRA-VAT-YYYY-XXXX-XXXX-XXXX",
-  "demo_codes": {
-    "description": "Special demo codes with guaranteed outcomes",
+  "generated": "2024-12-29",
+  "format_versions": {
+    "v1": "GRA-VAT-YYYY-XXXX-XXXX-XXXX (simple text format)",
+    "v2": "https://evat.gra.gov.gh/verify?sdc=...&rcpt=...&sig=... (realistic URL format)"
+  },
+  "v2_codes": {
+    "description": "Realistic format matching real GRA e-VAT receipts",
     "guaranteed_win": [
       {
-        "id": "W1",
+        "id": "V2W1",
+        "url": "https://evat.gra.gov.gh/verify?sdc=60000010&rcpt=1D17-822F-N5101&data=42NSJPSG-EZ4-K643&ts=20251228122154&sig=WIN1AAAABBBBCCCC",
+        "data": {
+          "sdcId": "60000010",
+          "rcptNum": "1D17-822F-N5101",
+          "ts": "20251228122154"
+        },
+        "prize": "GH₵5 Airtime",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D60000010%26rcpt%3D1D17-822F-N5101%26data%3D42NSJPSG-EZ4-K643%26ts%3D20251228122154%26sig%3DWIN1AAAABBBBCCCC"
+      },
+      {
+        "id": "V2W2",
+        "url": "https://evat.gra.gov.gh/verify?sdc=60000020&rcpt=2E28-933G-O6202&data=53OTKQTH-FA5-L754&ts=20251228130000&sig=WIN2DDDDEEEEFFFFF",
+        "data": {
+          "sdcId": "60000020",
+          "rcptNum": "2E28-933G-O6202",
+          "ts": "20251228130000"
+        },
+        "prize": "GH₵10 Airtime",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D60000020%26rcpt%3D2E28-933G-O6202%26data%3D53OTKQTH-FA5-L754%26ts%3D20251228130000%26sig%3DWIN2DDDDEEEEFFFFF"
+      },
+      {
+        "id": "V2W3",
+        "url": "https://evat.gra.gov.gh/verify?sdc=60000030&rcpt=3F39-A44H-P7303&data=64PULRUI-GB6-M865&ts=20251228140000&sig=WIN3GGGGHHHHIIII",
+        "data": {
+          "sdcId": "60000030",
+          "rcptNum": "3F39-A44H-P7303",
+          "ts": "20251228140000"
+        },
+        "prize": "GH₵50 Airtime",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D60000030%26rcpt%3D3F39-A44H-P7303%26data%3D64PULRUI-GB6-M865%26ts%3D20251228140000%26sig%3DWIN3GGGGHHHHIIII"
+      }
+    ],
+    "guaranteed_lose": [
+      {
+        "id": "V2L1",
+        "url": "https://evat.gra.gov.gh/verify?sdc=70000010&rcpt=LOSE-0001-X1001&data=LOSEDATA-AA1-B001&ts=20251228150000&sig=LOSE1JJJJKKKKLLLL",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D70000010%26rcpt%3DLOSE-0001-X1001%26data%3DLOSEDATA-AA1-B001%26ts%3D20251228150000%26sig%3DLOSE1JJJJKKKKLLLL"
+      },
+      {
+        "id": "V2L2",
+        "url": "https://evat.gra.gov.gh/verify?sdc=70000020&rcpt=LOSE-0002-Y2002&data=LOSEDATA-BB2-C002&ts=20251228160000&sig=LOSE2MMMMNNNNOOOO",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D70000020%26rcpt%3DLOSE-0002-Y2002%26data%3DLOSEDATA-BB2-C002%26ts%3D20251228160000%26sig%3DLOSE2MMMMNNNNOOOO"
+      }
+    ],
+    "random_codes": [
+      {
+        "id": "V2R1",
+        "url": "https://evat.gra.gov.gh/verify?sdc=80000010&rcpt=RAND-0001-Z3003&data=RANDDATA-CC3-D003&ts=20251228170000&sig=RAND1PPPPQQQQRRRR",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D80000010%26rcpt%3DRAND-0001-Z3003%26data%3DRANDDATA-CC3-D003%26ts%3D20251228170000%26sig%3DRAND1PPPPQQQQRRRR"
+      },
+      {
+        "id": "V2R2",
+        "url": "https://evat.gra.gov.gh/verify?sdc=80000020&rcpt=RAND-0002-A4004&data=RANDDATA-DD4-E004&ts=20251228180000&sig=RAND2SSSSTTTTUUUU",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D80000020%26rcpt%3DRAND-0002-A4004%26data%3DRANDDATA-DD4-E004%26ts%3D20251228180000%26sig%3DRAND2SSSSTTTTUUUU"
+      },
+      {
+        "id": "V2R3",
+        "url": "https://evat.gra.gov.gh/verify?sdc=80000030&rcpt=ABCD-1234-E5678&data=TESTDATA-XY1-Z234&ts=20251229090000&sig=TEST1VVVVWWWWXXXX",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fevat.gra.gov.gh%2Fverify%3Fsdc%3D80000030%26rcpt%3DABCD-1234-E5678%26data%3DTESTDATA-XY1-Z234%26ts%3D20251229090000%26sig%3DTEST1VVVVWWWWXXXX"
+      }
+    ]
+  },
+  "v1_codes": {
+    "description": "Original simple format (for fallback/testing)",
+    "guaranteed_win": [
+      {
+        "id": "V1W1",
         "code": "GRA-VAT-2024-WIN0-AAAA-0001",
         "prize": "GH₵5 Airtime",
         "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-WIN0-AAAA-0001"
       },
       {
-        "id": "W2",
+        "id": "V1W2",
         "code": "GRA-VAT-2024-WIN0-BBBB-0002",
         "prize": "GH₵5 Airtime",
         "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-WIN0-BBBB-0002"
       },
       {
-        "id": "W3",
+        "id": "V1W3",
         "code": "GRA-VAT-2024-WIN1-CCCC-0003",
         "prize": "GH₵10 Airtime",
         "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-WIN1-CCCC-0003"
       },
       {
-        "id": "W4",
+        "id": "V1W4",
         "code": "GRA-VAT-2024-WIN1-DDDD-0004",
         "prize": "GH₵10 Airtime",
         "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-WIN1-DDDD-0004"
       },
       {
-        "id": "W5",
+        "id": "V1W5",
         "code": "GRA-VAT-2024-WIN2-EEEE-0005",
         "prize": "GH₵50 Airtime",
         "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-WIN2-EEEE-0005"
@@ -38,67 +108,42 @@
     ],
     "guaranteed_lose": [
       {
-        "id": "L1",
+        "id": "V1L1",
         "code": "GRA-VAT-2024-LOSE-XXXX-0001",
         "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-LOSE-XXXX-0001"
       },
       {
-        "id": "L2",
+        "id": "V1L2",
         "code": "GRA-VAT-2024-LOSE-YYYY-0002",
         "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-LOSE-YYYY-0002"
       }
+    ],
+    "random_codes": [
+      {
+        "id": "V1R1",
+        "code": "GRA-VAT-2024-A1B2-C3D4-E5F6",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-A1B2-C3D4-E5F6"
+      },
+      {
+        "id": "V1R2",
+        "code": "GRA-VAT-2024-G7H8-I9J0-K1L2",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-G7H8-I9J0-K1L2"
+      },
+      {
+        "id": "V1R3",
+        "code": "GRA-VAT-2024-M3N4-O5P6-Q7R8",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-M3N4-O5P6-Q7R8"
+      },
+      {
+        "id": "V1R4",
+        "code": "GRA-VAT-2024-S9T0-U1V2-W3X4",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-S9T0-U1V2-W3X4"
+      },
+      {
+        "id": "V1R5",
+        "code": "GRA-VAT-2024-Y5Z6-A7B8-C9D0",
+        "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-Y5Z6-A7B8-C9D0"
+      }
     ]
-  },
-  "random_codes": [
-    {
-      "id": 1,
-      "code": "GRA-VAT-2024-A1B2-C3D4-E5F6",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-A1B2-C3D4-E5F6"
-    },
-    {
-      "id": 2,
-      "code": "GRA-VAT-2024-G7H8-I9J0-K1L2",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-G7H8-I9J0-K1L2"
-    },
-    {
-      "id": 3,
-      "code": "GRA-VAT-2024-M3N4-O5P6-Q7R8",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-M3N4-O5P6-Q7R8"
-    },
-    {
-      "id": 4,
-      "code": "GRA-VAT-2024-S9T0-U1V2-W3X4",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-S9T0-U1V2-W3X4"
-    },
-    {
-      "id": 5,
-      "code": "GRA-VAT-2024-Y5Z6-A7B8-C9D0",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-Y5Z6-A7B8-C9D0"
-    },
-    {
-      "id": 6,
-      "code": "GRA-VAT-2024-E1F2-G3H4-I5J6",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-E1F2-G3H4-I5J6"
-    },
-    {
-      "id": 7,
-      "code": "GRA-VAT-2024-K7L8-M9N0-O1P2",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-K7L8-M9N0-O1P2"
-    },
-    {
-      "id": 8,
-      "code": "GRA-VAT-2024-Q3R4-S5T6-U7V8",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-Q3R4-S5T6-U7V8"
-    },
-    {
-      "id": 9,
-      "code": "GRA-VAT-2024-W9X0-Y1Z2-A3B4",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-W9X0-Y1Z2-A3B4"
-    },
-    {
-      "id": 10,
-      "code": "GRA-VAT-2024-C5D6-E7F8-G9H0",
-      "qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GRA-VAT-2024-C5D6-E7F8-G9H0"
-    }
-  ]
+  }
 }

@@ -872,3 +872,109 @@ h3 {
   background: var(--ghana-black);
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
+
+/* ===== QR Version Badge ===== */
+.version-badge {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  z-index: 1000;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.version-badge.v1 {
+  background: #6b7280;
+  color: white;
+}
+
+.version-badge.v2 {
+  background: var(--ghana-green);
+  color: white;
+}
+
+/* ===== QR Version Toggle (Admin) ===== */
+.qr-version-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toggle-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid var(--gray-light);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-option:hover {
+  border-color: var(--ghana-green);
+  background: rgba(0, 107, 63, 0.05);
+}
+
+.toggle-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--ghana-green);
+}
+
+.toggle-option input[type="radio"]:checked + .toggle-content {
+  color: var(--ghana-green);
+}
+
+.toggle-option:has(input:checked) {
+  border-color: var(--ghana-green);
+  background: rgba(0, 107, 63, 0.1);
+}
+
+.toggle-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.toggle-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.toggle-desc {
+  font-size: 0.75rem;
+  color: var(--gray);
+  font-family: monospace;
+}
+
+/* ===== QR Card Version Tag ===== */
+.qr-card {
+  position: relative;
+}
+
+.qr-version-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.qr-version-tag.v1 {
+  background: #6b7280;
+  color: white;
+}
+
+.qr-version-tag.v2 {
+  background: var(--ghana-green);
+  color: white;
+}

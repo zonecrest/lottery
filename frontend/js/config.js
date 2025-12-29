@@ -22,8 +22,27 @@ const CONFIG = {
   // Rate limiting
   MAX_SCANS_PER_HOUR: 10,
 
-  // QR code format validation
+  // QR Code format version: 'v1' or 'v2'
+  // v1 = simple text format (GRA-VAT-2024-XXXX-XXXX-XXXX)
+  // v2 = realistic URL format matching real GRA e-VAT receipts
+  // NOTE: This is SEPARATE from DEMO_MODE which controls n8n connectivity
+  QR_FORMAT_VERSION: 'v2',
+
+  // QR code format validation patterns
+  QR_PATTERNS: {
+    v1: /^GRA-VAT-\d{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/,
+    v2: /^https?:\/\/(evat\.gra\.gov\.gh|vsdc\.vat-gh\.com)\/verify\?/i
+  },
+
+  // Legacy pattern (for backwards compatibility)
   QR_PATTERN: /^GRA-VAT-\d{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/,
+
+  // v2 QR generation settings (realistic format)
+  QR_V2_SETTINGS: {
+    BASE_URL: 'https://evat.gra.gov.gh/verify',
+    SDC_ID_MIN: 10000000,
+    SDC_ID_MAX: 99999999
+  },
 
   // Local storage keys
   STORAGE_KEYS: {

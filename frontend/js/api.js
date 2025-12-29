@@ -8,27 +8,34 @@ const API = {
    * Submit a scanned QR code
    * @param {string} qrCode - The scanned QR code
    * @param {string} phone - User's phone number
+   * @param {Object} parsed - Parsed QR code data (optional)
    * @returns {Promise<Object>} Scan result
    */
-  async submitScan(qrCode, phone) {
+  async submitScan(qrCode, phone, parsed = null) {
     const timestamp = new Date().toISOString();
 
     // Debug logging - check browser console (F12)
-    console.log('[API] submitScan called', { qrCode, phone });
+    console.log('[API] submitScan called', { qrCode, phone, parsed });
     console.log('[API] DEMO_MODE:', CONFIG.DEMO_MODE);
     console.log('[API] isN8nConfigured:', CONFIG.isN8nConfigured());
 
     // Check if n8n is configured, otherwise use demo mode
     if (CONFIG.DEMO_MODE || !CONFIG.isN8nConfigured()) {
       console.log('[API] >>> Using DEMO mode (not calling n8n)');
-      return this._demoScan(qrCode, phone, timestamp);
+      return this._demoScan(qrCode, phone, timestamp, parsed);
     }
 
     const endpoint = CONFIG.getEndpoint(CONFIG.ENDPOINTS.SCAN);
     console.log('[API] >>> Calling n8n:', endpoint);
 
     try {
-      const body = { qr_code: qrCode, phone: phone, timestamp: timestamp };
+      const body = {
+        qr_code: qrCode,
+        phone: phone,
+        timestamp: timestamp,
+        parsed: parsed,
+        unique_id: parsed ? QRParser.getUniqueId(parsed) : qrCode
+      };
       console.log('[API] Request body:', body);
 
       const response = await fetch(endpoint, {
@@ -68,7 +75,7 @@ const API = {
     } catch (error) {
       console.error('[API] ERROR:', error);
       console.log('[API] Falling back to demo mode');
-      return this._demoScan(qrCode, phone, timestamp);
+      return this._demoScan(qrCode, phone, timestamp, parsed);
     }
   },
 
@@ -136,10 +143,20 @@ const API = {
 
   /**
    * Demo mode scan simulation
+   * @param {string} qrCode - Raw QR code string
+   * @param {string} phone - User's phone number
+   * @param {string} timestamp - ISO timestamp
+   * @param {Object} parsed - Parsed QR code data (optional)
    */
-  _demoScan(qrCode, phone, timestamp) {
-    // Validate QR code format
-    if (!CONFIG.QR_PATTERN.test(qrCode)) {
+  _demoScan(qrCode, phone, timestamp, parsed = null) {
+    // Get unique ID for duplicate detection
+    const uniqueId = parsed ? QRParser.getUniqueId(parsed) : qrCode;
+
+    // Validate QR code format - accept both v1 and v2
+    const isV1 = CONFIG.QR_PATTERNS.v1.test(qrCode);
+    const isV2 = CONFIG.QR_PATTERNS.v2.test(qrCode);
+
+    if (!isV1 && !isV2) {
       return {
         success: false,
         error: 'Invalid QR code format',
@@ -147,9 +164,10 @@ const API = {
       };
     }
 
-    // Check for duplicate scan
+    // Check for duplicate scan using unique ID
     const scanHistory = this._getScanHistory();
-    if (scanHistory.includes(qrCode)) {
+    const scannedIds = scanHistory.map(s => s.uniqueId || s.qrCode);
+    if (scannedIds.includes(uniqueId)) {
       return {
         success: false,
         error: 'Duplicate scan',
@@ -171,10 +189,10 @@ const API = {
     let isWin;
     let prize = null;
 
+    // Check for v1 demo codes
     if (qrCode.includes('-WIN0-') || qrCode.includes('-WIN1-') || qrCode.includes('-WIN2-')) {
-      // Guaranteed win codes for demos
+      // Guaranteed win codes for demos (v1 format)
       isWin = true;
-      // WIN0 = GH₵5, WIN1 = GH₵10, WIN2 = GH₵50
       if (qrCode.includes('-WIN2-')) {
         prize = 'GH₵50 Airtime';
       } else if (qrCode.includes('-WIN1-')) {
@@ -183,8 +201,30 @@ const API = {
         prize = 'GH₵5 Airtime';
       }
     } else if (qrCode.includes('-LOSE-')) {
-      // Guaranteed lose codes for demos
+      // Guaranteed lose codes for demos (v1 format)
       isWin = false;
+    } else if (isV2 && parsed && parsed.data && parsed.data.sig) {
+      // Check for v2 demo codes using signature pattern
+      const sig = parsed.data.sig;
+      if (sig.startsWith('WIN1')) {
+        isWin = true;
+        prize = 'GH₵5 Airtime';
+      } else if (sig.startsWith('WIN2')) {
+        isWin = true;
+        prize = 'GH₵10 Airtime';
+      } else if (sig.startsWith('WIN3')) {
+        isWin = true;
+        prize = 'GH₵50 Airtime';
+      } else if (sig.startsWith('LOSE')) {
+        isWin = false;
+      } else {
+        // Normal random result
+        const random = Math.random() * 100;
+        isWin = random < CONFIG.WIN_PERCENTAGE;
+        if (isWin) {
+          prize = this._determinePrize();
+        }
+      }
     } else {
       // Normal random result
       const random = Math.random() * 100;
@@ -201,12 +241,14 @@ const API = {
     // Store the scan
     this._storeScan({
       qrCode,
+      uniqueId,
       phone,
       timestamp,
       result: isWin ? 'WIN' : 'LOSE',
       prize,
       transactionHash,
-      randomSeed
+      randomSeed,
+      version: parsed ? parsed.version : 'v1'
     });
 
     // Get updated stats
@@ -426,16 +468,18 @@ const API = {
     const history = this._getScanHistory();
     history.push({
       qrCode: scan.qrCode,
+      uniqueId: scan.uniqueId || scan.qrCode,
       phone: scan.phone,
       timestamp: scan.timestamp,
       result: scan.result,
-      prize: scan.prize
+      prize: scan.prize,
+      version: scan.version || 'v1'
     });
     localStorage.setItem(CONFIG.STORAGE_KEYS.SCAN_HISTORY, JSON.stringify(history));
 
-    // Add QR code to scanned list
+    // Add unique ID to scanned list (for duplicate detection)
     const scannedCodes = JSON.parse(localStorage.getItem('scanned_codes') || '[]');
-    scannedCodes.push(scan.qrCode);
+    scannedCodes.push(scan.uniqueId || scan.qrCode);
     localStorage.setItem('scanned_codes', JSON.stringify(scannedCodes));
 
     // If win, add to audit log
@@ -445,9 +489,11 @@ const API = {
         timestamp: scan.timestamp,
         phone: scan.phone,
         qrCode: scan.qrCode,
+        uniqueId: scan.uniqueId || scan.qrCode,
         prize: scan.prize,
         transactionHash: scan.transactionHash,
-        randomSeed: scan.randomSeed
+        randomSeed: scan.randomSeed,
+        version: scan.version || 'v1'
       });
       localStorage.setItem(CONFIG.STORAGE_KEYS.AUDIT_LOG, JSON.stringify(auditLog));
     }

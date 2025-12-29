@@ -27,13 +27,54 @@ const App = {
     // Initialize offline detection
     this._initOfflineDetection();
 
+    // Initialize version badge
+    this._updateVersionBadge();
+
     // Initialize page-specific features
     this._initPage();
 
     console.log('App initialized', {
       isRegistered: this.isRegistered,
-      phone: this.userPhone
+      phone: this.userPhone,
+      qrVersion: this.getQRFormatVersion()
     });
+  },
+
+  /**
+   * Get current QR format version
+   * @returns {string} 'v1' or 'v2'
+   */
+  getQRFormatVersion() {
+    // Priority: URL param > localStorage > config default
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('qr')) {
+      return urlParams.get('qr');
+    }
+    return localStorage.getItem('evat_qr_format_version') || CONFIG.QR_FORMAT_VERSION;
+  },
+
+  /**
+   * Set QR format version
+   * @param {string} version - 'v1' or 'v2'
+   */
+  setQRFormatVersion(version) {
+    localStorage.setItem('evat_qr_format_version', version);
+    this._updateVersionBadge();
+  },
+
+  /**
+   * Update version badge display
+   */
+  _updateVersionBadge() {
+    const badge = document.getElementById('qr-version-badge');
+    if (!badge) return;
+
+    const version = this.getQRFormatVersion();
+    badge.className = `version-badge ${version}`;
+    const badgeText = badge.querySelector('.badge-text');
+    if (badgeText) {
+      badgeText.textContent = `QR ${version}`;
+    }
   },
 
   /**
@@ -66,20 +107,37 @@ const App = {
       return;
     }
 
+    // Parse the QR code to determine format and extract data
+    const parsed = QRParser.parse(qrCode);
+    console.log('[App] Parsed QR code:', parsed);
+
+    // Check if it's a valid format
+    if (!parsed.valid) {
+      this.showToast('Invalid receipt QR code. Please scan a valid GRA VAT receipt.', 'error');
+      if (Scanner.isScanning) {
+        Scanner.resume();
+      }
+      return;
+    }
+
+    // Get unique ID for duplicate detection
+    const uniqueId = QRParser.getUniqueId(parsed);
+
     // Debounce: ignore same code within 5 seconds
     const now = Date.now();
-    if (qrCode === this.lastScannedCode && (now - this.lastScanTime) < 5000) {
+    if (uniqueId === this.lastScannedCode && (now - this.lastScanTime) < 5000) {
       console.log('[App] Ignoring duplicate scan');
       return;
     }
-    this.lastScannedCode = qrCode;
+    this.lastScannedCode = uniqueId;
     this.lastScanTime = now;
 
     // Show loading
     this._showLoading(true);
 
     try {
-      const result = await API.submitScan(qrCode, this.userPhone);
+      // Submit with parsed data
+      const result = await API.submitScan(qrCode, this.userPhone, parsed);
 
       this._showLoading(false);
 
@@ -545,6 +603,9 @@ const App = {
    * Initialize admin page
    */
   _initAdminPage() {
+    // Initialize QR version toggle
+    this._initQRVersionToggle();
+
     // Generate QR codes button
     const generateBtn = document.getElementById('generate-qr-btn');
     if (generateBtn) {
@@ -562,6 +623,25 @@ const App = {
   },
 
   /**
+   * Initialize QR format version toggle on admin page
+   */
+  _initQRVersionToggle() {
+    const currentVersion = this.getQRFormatVersion();
+
+    // Set initial radio button state
+    const radioEl = document.getElementById(`qr-${currentVersion}`);
+    if (radioEl) radioEl.checked = true;
+
+    // Add change listeners
+    document.querySelectorAll('input[name="qr-version"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        this.setQRFormatVersion(e.target.value);
+        this.showToast(`Switched to QR format ${e.target.value}`, 'success');
+      });
+    });
+  },
+
+  /**
    * Generate QR codes for testing
    */
   async generateQRCodes() {
@@ -575,19 +655,27 @@ const App = {
 
     try {
       const qrCodes = QRGenerator.generateMultiple(count);
+      const version = this.getQRFormatVersion();
 
       let html = '';
       qrCodes.forEach(qr => {
+        // For v2, show a shortened display of the receipt number
+        let displayText = qr.code;
+        if (qr.version === 'v2' && qr.data) {
+          displayText = `Receipt: ${qr.data.rcptNum}`;
+        }
+
         html += `
           <div class="qr-card">
+            <div class="qr-version-tag ${qr.version}">${qr.version}</div>
             <img src="${qr.url}" alt="QR Code" loading="lazy">
-            <div class="qr-code-text">${qr.code}</div>
+            <div class="qr-code-text">${displayText}</div>
           </div>
         `;
       });
 
       container.innerHTML = html;
-      this.showToast(`Generated ${count} QR codes`, 'success');
+      this.showToast(`Generated ${count} QR codes (${version} format)`, 'success');
     } catch (error) {
       console.error('Failed to generate QR codes:', error);
       container.innerHTML = '<p class="text-center text-gray">Failed to generate QR codes</p>';

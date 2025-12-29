@@ -31,6 +31,11 @@
       <p>Demo Management</p>
     </header>
 
+    <!-- Version Badge -->
+    <div id="qr-version-badge" class="version-badge v2">
+      <span class="badge-text">QR v2</span>
+    </div>
+
     <!-- Demo Mode Notice -->
     <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
       <h3 style="color: #856404; margin-bottom: 0.5rem;">
@@ -40,6 +45,40 @@
         This prototype is running in demo mode with simulated data. All transactions are stored locally in your browser. In production, this would connect to the n8n backend and Google Sheets.
       </p>
     </div>
+
+    <!-- QR Format Version Section -->
+    <section class="admin-section">
+      <h3>
+        <span>📱</span> QR Format Version
+      </h3>
+
+      <div class="card">
+        <p class="text-sm text-gray mb-2">
+          Controls which QR code format is generated. Both formats can always be scanned.
+        </p>
+
+        <div class="qr-version-toggle">
+          <label class="toggle-option">
+            <input type="radio" name="qr-version" value="v1" id="qr-v1">
+            <div class="toggle-content">
+              <span class="toggle-title">v1 - Simple Format</span>
+              <span class="toggle-desc">GRA-VAT-2024-XXXX-XXXX-XXXX</span>
+            </div>
+          </label>
+          <label class="toggle-option">
+            <input type="radio" name="qr-version" value="v2" id="qr-v2" checked>
+            <div class="toggle-content">
+              <span class="toggle-title">v2 - Realistic Format</span>
+              <span class="toggle-desc">URL format matching real GRA receipts</span>
+            </div>
+          </label>
+        </div>
+
+        <p class="text-xs text-gray mt-1">
+          <strong>Note:</strong> QR format version is separate from Demo Mode. This only affects which format is generated for testing.
+        </p>
+      </div>
+    </section>
 
     <!-- Generate QR Codes Section -->
     <section class="admin-section">

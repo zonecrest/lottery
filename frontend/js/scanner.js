@@ -3,6 +3,116 @@
  * Handles camera-based QR code scanning using html5-qrcode library
  */
 
+/**
+ * QR Code Parser - Handles both v1 and v2 QR code formats
+ */
+const QRParser = {
+  /**
+   * Parse a scanned QR code and determine its version
+   * @param {string} qrContent - Raw content from QR scanner
+   * @returns {Object} Parsed result with version and data
+   */
+  parse(qrContent) {
+    // Check if it's v2 (URL format)
+    if (this.isV2Format(qrContent)) {
+      return {
+        version: 'v2',
+        valid: true,
+        data: this.parseV2URL(qrContent),
+        raw: qrContent
+      };
+    }
+
+    // Check if it's v1 format
+    if (this.isV1Format(qrContent)) {
+      return {
+        version: 'v1',
+        valid: true,
+        data: { code: qrContent },
+        raw: qrContent
+      };
+    }
+
+    // Unknown format
+    return {
+      version: 'unknown',
+      valid: false,
+      data: null,
+      raw: qrContent,
+      error: 'Unrecognized QR code format'
+    };
+  },
+
+  /**
+   * Check if content matches v2 (realistic) URL format
+   */
+  isV2Format(content) {
+    const urlPattern = /^https?:\/\/(evat\.gra\.gov\.gh|vsdc\.vat-gh\.com)\/verify\?/i;
+    return urlPattern.test(content);
+  },
+
+  /**
+   * Check if content matches v1 format
+   */
+  isV1Format(content) {
+    const v1Pattern = /^GRA-VAT-\d{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+    return v1Pattern.test(content);
+  },
+
+  /**
+   * Parse v2 URL format
+   */
+  parseV2URL(urlString) {
+    try {
+      const url = new URL(urlString);
+      const params = url.searchParams;
+
+      return {
+        sdcId: params.get('sdc'),
+        rcptNum: params.get('rcpt'),
+        internalData: params.get('data'),
+        ts: params.get('ts'),
+        sig: params.get('sig'),
+        timestampFormatted: this.formatTimestamp(params.get('ts'))
+      };
+    } catch (e) {
+      console.error('Failed to parse v2 URL:', e);
+      return null;
+    }
+  },
+
+  /**
+   * Format compact timestamp to readable date
+   */
+  formatTimestamp(ts) {
+    if (!ts || ts.length < 14) return 'Unknown';
+    try {
+      const year = ts.substring(0, 4);
+      const month = ts.substring(4, 6);
+      const day = ts.substring(6, 8);
+      const hour = ts.substring(8, 10);
+      const min = ts.substring(10, 12);
+      const sec = ts.substring(12, 14);
+      return `${year}/${month}/${day} ${hour}:${min}:${sec}`;
+    } catch (e) {
+      return 'Unknown';
+    }
+  },
+
+  /**
+   * Generate a unique identifier for lottery from parsed data
+   * This is used for duplicate detection and lottery seeding
+   */
+  getUniqueId(parsedData) {
+    if (parsedData.version === 'v2') {
+      return parsedData.data.rcptNum;
+    } else if (parsedData.version === 'v1') {
+      return parsedData.data.code;
+    }
+    return null;
+  }
+};
+
 const Scanner = {
   html5QrCode: null,
   isScanning: false,
@@ -238,21 +348,123 @@ const QRGenerator = {
   },
 
   /**
-   * Generate a valid GRA VAT QR code
+   * Generate a valid GRA VAT QR code (v1 format)
    * @returns {string} Valid QR code string
    */
   generateValidCode() {
-    const year = new Date().getFullYear();
-    const randomPart = () => {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let result = '';
-      for (let i = 0; i < 4; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return result;
-    };
+    const version = this.getQRFormatVersion();
+    if (version === 'v2') {
+      return this.generateV2Code().url;
+    }
+    return this.generateV1Code();
+  },
 
-    return `GRA-VAT-${year}-${randomPart()}-${randomPart()}-${randomPart()}`;
+  /**
+   * Generate v1 format code (simple text)
+   * @returns {string} V1 format code
+   */
+  generateV1Code() {
+    const year = new Date().getFullYear();
+    return `GRA-VAT-${year}-${this._randomAlphanumeric(4)}-${this._randomAlphanumeric(4)}-${this._randomAlphanumeric(4)}`;
+  },
+
+  /**
+   * Generate v2 format code (realistic URL format)
+   * @returns {Object} Object with url and data properties
+   */
+  generateV2Code() {
+    const sdcId = this._generateSDCId();
+    const rcptNum = this._generateReceiptNumber();
+    const internalData = this._generateInternalData();
+    const ts = this._generateTimestamp();
+    const sig = this._generateSignature();
+
+    const url = `${CONFIG.QR_V2_SETTINGS.BASE_URL}?sdc=${sdcId}&rcpt=${encodeURIComponent(rcptNum)}&data=${internalData}&ts=${ts}&sig=${sig}`;
+
+    return {
+      url: url,
+      data: { sdcId, rcptNum, internalData, ts, sig }
+    };
+  },
+
+  /**
+   * Generate 8-digit SDC ID
+   * @returns {string}
+   */
+  _generateSDCId() {
+    const min = CONFIG.QR_V2_SETTINGS.SDC_ID_MIN;
+    const max = CONFIG.QR_V2_SETTINGS.SDC_ID_MAX;
+    return String(Math.floor(Math.random() * (max - min)) + min);
+  },
+
+  /**
+   * Generate receipt number: XXXX-XXXX-XXXXX
+   * @returns {string}
+   */
+  _generateReceiptNumber() {
+    const block1 = this._randomAlphanumeric(4);
+    const block2 = this._randomAlphanumeric(4);
+    const block3 = this._randomAlphanumeric(5);
+    return `${block1}-${block2}-${block3}`;
+  },
+
+  /**
+   * Generate internal data: XXXXXXXX-XXX-XXXX
+   * @returns {string}
+   */
+  _generateInternalData() {
+    const block1 = this._randomAlphanumeric(8);
+    const block2 = this._randomAlphanumeric(3);
+    const block3 = this._randomAlphanumeric(4);
+    return `${block1}-${block2}-${block3}`;
+  },
+
+  /**
+   * Generate compact timestamp: YYYYMMDDHHmmss
+   * @returns {string}
+   */
+  _generateTimestamp() {
+    const now = new Date();
+    // Randomize within last 30 days for variety
+    now.setDate(now.getDate() - Math.floor(Math.random() * 30));
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  },
+
+  /**
+   * Generate signature (16 chars alphanumeric)
+   * @returns {string}
+   */
+  _generateSignature() {
+    return this._randomAlphanumeric(4) + this._randomAlphanumeric(4) +
+           this._randomAlphanumeric(4) + this._randomAlphanumeric(4);
+  },
+
+  /**
+   * Generate random alphanumeric string
+   * @param {number} length
+   * @returns {string}
+   */
+  _randomAlphanumeric(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  },
+
+  /**
+   * Get current QR format version setting
+   * @returns {string} 'v1' or 'v2'
+   */
+  getQRFormatVersion() {
+    // Priority: URL param > localStorage > config default
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('qr')) {
+      return urlParams.get('qr');
+    }
+    return localStorage.getItem('evat_qr_format_version') || CONFIG.QR_FORMAT_VERSION;
   },
 
   /**
@@ -262,12 +474,25 @@ const QRGenerator = {
    */
   generateMultiple(count) {
     const codes = [];
+    const version = this.getQRFormatVersion();
+
     for (let i = 0; i < count; i++) {
-      const code = this.generateValidCode();
-      codes.push({
-        code: code,
-        url: this.getQRCodeUrl(code)
-      });
+      if (version === 'v2') {
+        const v2 = this.generateV2Code();
+        codes.push({
+          code: v2.url,
+          url: this.getQRCodeUrl(v2.url),
+          version: 'v2',
+          data: v2.data
+        });
+      } else {
+        const code = this.generateV1Code();
+        codes.push({
+          code: code,
+          url: this.getQRCodeUrl(code),
+          version: 'v1'
+        });
+      }
     }
     return codes;
   }
