@@ -13,32 +13,42 @@ const API = {
   async submitScan(qrCode, phone) {
     const timestamp = new Date().toISOString();
 
+    // Debug logging - check browser console (F12)
+    console.log('[API] submitScan called', { qrCode, phone });
+    console.log('[API] DEMO_MODE:', CONFIG.DEMO_MODE);
+    console.log('[API] isN8nConfigured:', CONFIG.isN8nConfigured());
+
     // Check if n8n is configured, otherwise use demo mode
     if (CONFIG.DEMO_MODE || !CONFIG.isN8nConfigured()) {
+      console.log('[API] >>> Using DEMO mode (not calling n8n)');
       return this._demoScan(qrCode, phone, timestamp);
     }
 
+    const endpoint = CONFIG.getEndpoint(CONFIG.ENDPOINTS.SCAN);
+    console.log('[API] >>> Calling n8n:', endpoint);
+
     try {
-      const response = await fetch(CONFIG.getEndpoint(CONFIG.ENDPOINTS.SCAN), {
+      const body = { qr_code: qrCode, phone: phone, timestamp: timestamp };
+      console.log('[API] Request body:', body);
+
+      const response = await fetch(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          qr_code: qrCode,
-          phone: phone,
-          timestamp: timestamp
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
       });
 
+      console.log('[API] Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Response not ok: ' + response.status);
       }
 
-      return await response.json();
+      const data = await response.json();
+      console.log('[API] Response data:', data);
+      return data;
     } catch (error) {
-      console.error('API Error:', error);
-      // Fallback to demo mode on error
+      console.error('[API] ERROR:', error);
+      console.log('[API] Falling back to demo mode');
       return this._demoScan(qrCode, phone, timestamp);
     }
   },
