@@ -7,7 +7,7 @@ const CONFIG = {
   N8N_WEBHOOK_URL: 'https://zonecrest.app.n8n.cloud/webhook',
 
   // Demo mode - uses local simulation when n8n is not configured
-  DEMO_MODE: true,
+  DEMO_MODE: false,
 
   // Demo settings
   WIN_PERCENTAGE: 10,  // 10% chance to win
