@@ -43,8 +43,27 @@ const API = {
         throw new Error('Response not ok: ' + response.status);
       }
 
-      const data = await response.json();
+      let data = await response.json();
       console.log('[API] Response data:', data);
+      // Handle array response from n8n
+      if (Array.isArray(data) && data.length > 0) {
+        data = data[0];
+      }
+
+      // Normalize n8n response to app format
+      if (data.transaction_hash && !data.hasOwnProperty("success")) {
+        const isWin = !!data.prize;
+        return {
+          success: true,
+          result: isWin ? "WIN" : "LOSE",
+          prize: data.prize || null,
+          transaction_hash: data.transaction_hash,
+          message: isWin ? "You won " + data.prize + "!" : "No win this time!",
+          total_scans: 0,
+          total_wins: 0
+        };
+      }
+
       return data;
     } catch (error) {
       console.error('[API] ERROR:', error);
