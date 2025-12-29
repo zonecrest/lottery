@@ -21,6 +21,11 @@
     You're offline. Some features may not work.
   </div>
 
+  <!-- Debug Banner (visible on mobile) -->
+  <div id="debug-banner" style="background:#000;color:#0f0;padding:8px;font-family:monospace;font-size:11px;max-height:80px;overflow:auto;">
+    Loading...
+  </div>
+
   <div class="container">
     <!-- Header -->
     <header class="page-header">
@@ -153,12 +158,24 @@
     <source src="assets/sounds/win.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Scripts (v2 cache bust) -->
+  <!-- Scripts (v3 cache bust) -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script src="js/config.js?v=2"></script>
-  <script src="js/api.js?v=2"></script>
-  <script src="js/scanner.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/config.js?v=3"></script>
+  <script>
+    // Inline debug - show config status immediately
+    var dbg = document.getElementById('debug-banner');
+    if (dbg && typeof CONFIG !== 'undefined') {
+      dbg.innerHTML = 'CONFIG loaded!<br>' +
+        'DEMO_MODE: ' + CONFIG.DEMO_MODE + '<br>' +
+        'N8N_URL: ' + CONFIG.N8N_WEBHOOK_URL + '<br>' +
+        'isN8nConfigured: ' + CONFIG.isN8nConfigured();
+    } else if (dbg) {
+      dbg.innerHTML = 'ERROR: CONFIG not loaded!';
+    }
+  </script>
+  <script src="js/api.js?v=3"></script>
+  <script src="js/scanner.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>
